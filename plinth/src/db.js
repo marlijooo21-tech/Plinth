@@ -96,18 +96,19 @@ export function subscribeToRoom(roomId, onRoomChange) {
 }
 
 export function subscribeToPlayers(roomId, onPlayersChange) {
-  return supabase
-    .channel(`players-${roomId}`)
-    .on(
-      'postgres_changes',
-      { event: '*', schema: 'public', table: 'players', filter: `room_id=eq.${roomId}` },
-      async () => {
-        // Re-fetch all players on any change
-        const players = await getPlayers(roomId)
-        onPlayersChange(players)
-      }
-    )
-    .subscribe()
+    let fetchSeq = 0
+    return supabase
+      .channel(`players-${roomId}`)
+      .on(
+              'postgres_changes',
+        { event: '*', schema: 'public', table: 'players', filter: `room_id=eq.${roomId}` },
+              async () => {
+                        const mySeq = ++fetchSeq
+                        const players = await getPlayers(roomId)
+                        if (mySeq === fetchSeq) onPlayersChange(players)
+              }
+            )
+      .subscribe()
 }
 
 export function unsubscribe(channel) {
