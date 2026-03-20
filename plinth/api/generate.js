@@ -29,7 +29,7 @@ where correct is the 0-based index of the right answer, and fact is a 1-sentence
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
+        model: 'claude-sonnet-4-5',
         max_tokens: 4000,
         messages: [{ role: 'user', content: prompt }],
       }),
