@@ -29,14 +29,15 @@ where correct is the 0-based index of the right answer, and fact is a 1-sentence
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model: 'claude-3-5-sonnet-20241022',
+        model: 'claude-sonnet-4-6',
         max_tokens: 4000,
         messages: [{ role: 'user', content: prompt }],
       }),
     })
 
     if (!res.ok) {
-      return new Response(JSON.stringify({ error: `API error ${res.status}` }), {
+      const errorBody = await res.text();
+      return new Response(JSON.stringify({ error: `API error ${res.status}`, details: errorBody }), {
         status: 502,
         headers: { 'Content-Type': 'application/json' },
       })
